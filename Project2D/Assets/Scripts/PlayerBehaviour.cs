@@ -7,11 +7,17 @@ public class PlayerBehaviour : MonoBehaviour
     Rigidbody2D playerbody;
     Vector2 mv;
     Vector2 currentpos;
+    Vector2 fireoffset;
     SpriteRenderer playerrenderer;
     float downforce;
     bool jumping;
+    float lastfire;
 
     public Animator playeranim;
+    public Transform attackreg;
+    public Transform Jumpattackreg;
+    public GameObject Fire;
+    public float firecooldown = 5f;
     public float mvmultiplier = 300f;
     public bool isGrounded;
     public float mvspeed = 50f;
@@ -23,6 +29,7 @@ public class PlayerBehaviour : MonoBehaviour
         playerrenderer = GetComponent<SpriteRenderer>();
         downforce = playerbody.gravityScale;
         jumping = false;
+        fireoffset = new Vector2(1, 0.02f);
     }
 
     // Update is called once per frame
@@ -39,7 +46,36 @@ public class PlayerBehaviour : MonoBehaviour
         {
             playerrenderer.flipX = true;
         }
+
         animate();
+
+        if (playerrenderer.flipX)
+        {
+            attackreg.position = transform.position + new Vector3(-.3f, 0, 0);
+            Jumpattackreg.position = transform.position + new Vector3(-.6f, .2f, 0);
+        }
+
+        else
+        {
+            attackreg.position = transform.position + new Vector3(1.55f, 0, 0);
+            Jumpattackreg.position = transform.position +  new Vector3(.8f, .2f, 0);
+        }
+
+        if (Input.GetButton("Fire2") && Time.time > lastfire)
+        {
+            lastfire = Time.time + firecooldown;
+            if (playerrenderer.flipX)
+            {
+                Vector2 oposingpos = new Vector2(currentpos.x-1.0f, currentpos.y + fireoffset.y);
+                Instantiate(Fire, oposingpos, new Quaternion(0, 0, 180, 0));
+            }
+
+            else
+            {
+                Instantiate(Fire, currentpos + fireoffset, new Quaternion(0, 0, 0, 0));
+            }
+            
+        }
     }
     private void FixedUpdate()
     {
@@ -73,11 +109,11 @@ public class PlayerBehaviour : MonoBehaviour
         {
             playeranim.SetTrigger("JumpAttack");
         }
-        else if (Input.GetButtonDown("Fire2") && isGrounded)
+        else if (Input.GetButton("Fire2") && isGrounded && Time.time > lastfire)
         {
             playeranim.SetTrigger("Skill");
         }
-        else if (Input.GetButtonDown("Fire2") && !isGrounded)
+        else if (Input.GetButton("Fire2") && !isGrounded && Time.time > lastfire)
         {
             playeranim.SetTrigger("JumpSkill");
         }

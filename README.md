@@ -21,3 +21,9 @@
 <br>Animate() function.
 <br>Along with the animations came the addition of the basic attack(The Animations handle the hitbox of the weapon).
 <br>Next is to work on the ninjas abillity to shoot fire 
+
+
+### Log5:
+<br>Started Working On AI.
+<br>Since Unity dosent have inbuilt sistems for this i had to download an external library called A\*
+<br>or the A\*Pathfinding project.
